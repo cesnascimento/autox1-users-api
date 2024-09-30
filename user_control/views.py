@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
 from datetime import datetime
 from backend.utils import CustomPagination, get_access_token, get_query
 from backend.custom_methods import IsAuthenticatedCustom
@@ -23,7 +24,7 @@ def add_user_activity(user, action):
         action=action
     )
 
-
+@swagger_auto_schema(tags=['Admin'])
 class CreateUserView(ModelViewSet):
     http_method_names = ["post"]
     queryset = CustomUser.objects.all()
@@ -57,7 +58,7 @@ class CreateUserView(ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-
+@swagger_auto_schema(tags=['User'])
 class LoginView(ModelViewSet):
     http_method_names = ["post"]
     queryset = CustomUser.objects.all()
@@ -103,7 +104,7 @@ class LoginView(ModelViewSet):
 
         return Response({"access": access})
 
-
+@swagger_auto_schema(tags=['User'])
 class UpdatePasswordView(ModelViewSet):
     serializer_class = UpdatePasswordSerializer
     http_method_names = ["post"]
@@ -128,7 +129,7 @@ class UpdatePasswordView(ModelViewSet):
 
         return Response({"success": "User password updated"})
 
-
+@swagger_auto_schema(tags=['User'])
 class MeView(ModelViewSet):
     serializer_class = CustomUserSerializer
     http_method_names = ["get"]
@@ -139,7 +140,7 @@ class MeView(ModelViewSet):
         data = self.serializer_class(request.user).data
         return Response(data)
 
-
+@swagger_auto_schema(tags=['User'])
 class UserActivitiesView(ModelViewSet):
     serializer_class = UserActivitiesSerializer
     http_method_names = ["get"]
@@ -166,7 +167,7 @@ class UserActivitiesView(ModelViewSet):
         
         return results
 
-
+@swagger_auto_schema(tags=['User'])
 class UsersView(ModelViewSet):
     serializer_class = CustomUserSerializer
     http_method_names = ["get"]
@@ -193,7 +194,7 @@ class UsersView(ModelViewSet):
         
         return results
 
-
+@swagger_auto_schema(tags=['Group'])
 class WPPGroupView(ModelViewSet):
     serializer_class = WPPGroupSerializer
     queryset = WPPGroup.objects.all()
