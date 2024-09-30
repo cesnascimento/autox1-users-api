@@ -1,0 +1,23 @@
+services:
+  zapconvert_db:
+    container_name: zapconvert_db
+    image: postgres
+    environment:
+      POSTGRES_DB: zapconvert_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      PGDATA: /data/zapconvert_db
+    volumes:
+      - zapconvert_db_data:/data/zapconvert_db
+    ports:
+      - "5436:5432"
+    networks:
+      - zapconvert_net
+    restart: unless-stopped
+
+networks:
+  zapconvert_net:
+    driver: bridge
+
+volumes:
+  zapconvert_db_data:

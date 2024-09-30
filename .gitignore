@@ -1,0 +1,4 @@
+.venv/
+backend/__pycache__
+user_control/__pycache__
+user_control/utils/__pycache__
