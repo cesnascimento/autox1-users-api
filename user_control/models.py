@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
-from user_control.views import add_user_activity
 
 Roles = (("admin", "admin"), ("user_1", "user1"), ("user_2", "user2"), ("user_3", "user3"))
 
@@ -71,25 +70,9 @@ class WPPGroup(models.Model):
     class Meta:
         ordering = ("-id",)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_name = self.origin
-
-    def save(self, *args, **kwargs):
-        action = f"Adicionado novo Grupo - '{self.origin}'"
-        if self.pk is not None:
-            action = f"Atualizado Grupo de - '{self.old_name}' para '{self.origin}'"
-        super().save(*args, **kwargs)
-        add_user_activity(self.created_by, action=action)
-
-    def delete(self, *args, **kwargs):
-        created_by = self.created_by
-        action = f"Deletado Grupo - '{self.origin}'"
-        super().delete(*args, **kwargs)
-        add_user_activity(created_by, action=action)
-
     def __str__(self):
         return f'{self.origin}: {self.invite_link}'
+
 
 
 class UserActivities(models.Model):
