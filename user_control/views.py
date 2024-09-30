@@ -200,25 +200,15 @@ class WPPGroupView(ModelViewSet):
     permission_classes = (IsAuthenticatedCustom, )
     pagination_class = CustomPagination
 
-    def get_queryset(self):
-        if self.request.method.lower() != "get":
-            return self.queryset
-
-        data = self.request.query_params.dict()
-        data.pop("page", None)
-        keyword = data.pop("keyword", None)
-
-        # Removendo o filtro por is_superuser, pois ele não pertence ao modelo Group
-        results = self.queryset.filter(**data, is_superuser=False)
-
-        if keyword:
-            search_fields = ("origin", "invite_link")  # Mantendo apenas os campos apropriados para busca textual
-            query = get_query(keyword, search_fields)
-            results = results.filter(query)
-
-        return results
-    
     def create(self, request, *args, **kwargs):
         request.data.update({"created_by_id": request.user.id})
-        add_user_activity(user, "Atualizou a senha")
+        add_user_activity(request.user, "Criou um grupo")
         return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        old_name = instance.origin
+        new_name = request.data.get("origin", old_name)
+        action = f"Atualizado Grupo de '{old_name}' para '{new_name}'"
+        add_user_activity(request.user, action)
+        return super().update(request, *args, **kwargs)
